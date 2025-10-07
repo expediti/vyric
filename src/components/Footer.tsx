@@ -32,7 +32,7 @@ const Footer = () => {
                   aria-label="Follow us on TikTok"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.321 5.562a5.124 5.124 0 01-.443-.258 6.228 6.228 0 01-1.137-.966c-.849-.849-1.377-1.987-1.377-3.338h-2.895v14.542a3.47 3.47 0 11-2.895-3.415V9.423a6.359 6.359 0 00-2.895.604v2.895a3.47 3.47 0 110 6.94 3.47 3.47 0 01-3.47-3.47V2h2.895c0 1.351.528 2.489 1.377 3.338.849.849 1.987 1.377 3.338 1.377h2.895c0-1.351.528-2.489 1.377-3.338z"/>
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                   </svg>
                 </a>
               </Button>
@@ -72,18 +72,6 @@ const Footer = () => {
                   <Twitter className="h-5 w-5" />
                 </a>
               </Button>
-
-              {/* GitHub Icon */}
-              <Button variant="ghost" size="sm" className="p-2" asChild>
-                <a 
-                  href="https://github.com/vyric" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  aria-label="Check our GitHub"
-                >
-                  <Github className="h-5 w-5" />
-                </a>
-              </Button>
             </div>
           </div>
 
@@ -104,11 +92,6 @@ const Footer = () => {
               <li>
                 <Link to="/collections" className="text-muted-foreground hover:text-foreground transition-colors">
                   Phonk Templates
-                </Link>
-              </li>
-              <li>
-                <Link to="/collections" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Instagram Stories
                 </Link>
               </li>
             </ul>
@@ -133,11 +116,6 @@ const Footer = () => {
                   How to Use
                 </a>
               </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  FAQ
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -156,4 +134,33 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foregroun
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Terms of Service
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-sm text-muted-foreground">
+              © 2025 VYRIC. All rights reserved. Free CapCut templates for creators.
+            </p>
+            <div className="flex space-x-6 text-sm">
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                Privacy
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                Terms
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
