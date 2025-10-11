@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
-import { useWishlist } from '@/hooks/useWishlist';
 import { supabase } from '@/lib/supabase';
-import { trackTemplateView, trackTemplateDownload, trackWishlistAction } from '@/lib/gtag';
+import { trackTemplateView, trackTemplateDownload } from '@/lib/gtag';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Download, Heart, Save, Share2, ArrowLeft, Play, Pause, Maximize, Minimize } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
@@ -28,7 +27,6 @@ interface Template {
 const TemplateDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { toast } = useToast();
   
   const [template, setTemplate] = useState<Template | null>(null);
@@ -36,19 +34,17 @@ const TemplateDetail = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [videoAspectRatio, setVideoAspectRatio] = useState('16/9');
+  const [inWishlist, setInWishlist] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const inWishlist = template ? isInWishlist(template.id) : false;
 
   useEffect(() => {
     const fetchTemplate = async () => {
       if (!id) return;
       
       try {
-        // 🔥 Real Supabase Query with exact table name
         const { data, error } = await supabase
-          .from('templates')  // Your exact Supabase table name
+          .from('templates')
           .select('*')
           .eq('id', id)
           .single();
@@ -59,9 +55,20 @@ const TemplateDetail = () => {
         }
 
         setTemplate(data);
+        
+        // Check if in wishlist
+        if (user) {
+          const { data: wishlistData } = await supabase
+            .from('user_wishlist')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('template_id', id)
+            .single();
+          
+          setInWishlist(!!wishlistData);
+        }
       } catch (error) {
         console.error('Error fetching template:', error);
-        // Optional: Set template to null to show "not found"
         setTemplate(null);
       } finally {
         setLoading(false);
@@ -69,7 +76,7 @@ const TemplateDetail = () => {
     };
 
     fetchTemplate();
-  }, [id]);
+  }, [id, user]);
 
   // Track template view when template loads
   useEffect(() => {
@@ -101,7 +108,6 @@ const TemplateDetail = () => {
     }
   };
 
-  // 🔥 Perfect CapCut redirect function
   const handleDownload = async () => {
     if (!template?.capcut_url) {
       toast({
@@ -113,10 +119,10 @@ const TemplateDetail = () => {
     }
 
     try {
-      // Track download in Supabase
+      // Track download
       if (user) {
         await supabase
-          .from('template_downloads')  // Adjust table name if needed
+          .from('template_downloads')
           .insert([
             { 
               user_id: user.id, 
@@ -126,10 +132,7 @@ const TemplateDetail = () => {
           ]);
       }
 
-      // Track download event for analytics
       trackTemplateDownload(template.id, template.title, template.editor);
-      
-      // Open CapCut URL in new window/tab
       window.open(template.capcut_url, '_blank');
       
       toast({
@@ -137,8 +140,7 @@ const TemplateDetail = () => {
         description: "Template is being opened in the CapCut app.",
       });
     } catch (error) {
-      console.error('Error tracking download:', error);
-      // Still open the link even if tracking fails
+      console.error('Error:', error);
       window.open(template.capcut_url, '_blank');
     }
   };
@@ -157,15 +159,25 @@ const TemplateDetail = () => {
 
     try {
       if (inWishlist) {
-        await removeFromWishlist(template.id);
-        trackWishlistAction('remove', template.id);
+        await supabase
+          .from('user_wishlist')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('template_id', template.id);
+        
+        setInWishlist(false);
         toast({
           title: "Removed from wishlist",
           description: "Template removed from your wishlist.",
         });
       } else {
-        await addToWishlist(template.id);
-        trackWishlistAction('add', template.id);
+        await supabase
+          .from('user_wishlist')
+          .insert([
+            { user_id: user.id, template_id: template.id }
+          ]);
+        
+        setInWishlist(true);
         toast({
           title: "Added to wishlist",
           description: "Template saved to your wishlist.",
@@ -234,11 +246,9 @@ const TemplateDetail = () => {
           url: window.location.href,
         });
       } catch (error) {
-        // User cancelled sharing
         console.log('Share cancelled');
       }
     } else {
-      // Fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href);
         toast({
@@ -320,7 +330,6 @@ const TemplateDetail = () => {
                       <source src={template.video_preview_url} type="video/mp4" />
                     </video>
                     
-                    {/* Video Controls Overlay */}
                     <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                       <div className="flex items-center gap-4">
                         <Button
@@ -371,7 +380,7 @@ const TemplateDetail = () => {
               </div>
             </div>
 
-            {/* Download Button */}
+            {/* Download Card */}
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -382,7 +391,6 @@ const TemplateDetail = () => {
                   </div>
                 </div>
                 
-                {/* 🔥 Main Edit in CapCut Button */}
                 <Button 
                   onClick={handleDownload}
                   className={`w-full h-12 text-lg text-white ${editorInfo.color}`}
@@ -392,7 +400,6 @@ const TemplateDetail = () => {
                 </Button>
 
                 <div className="flex gap-2 mt-4">
-                  {/* Wishlist Button */}
                   <Button 
                     variant="outline" 
                     className="flex-1"
@@ -402,13 +409,11 @@ const TemplateDetail = () => {
                     {inWishlist ? 'In Wishlist' : 'Add to Wishlist'}
                   </Button>
                   
-                  {/* Like Button */}
                   <Button variant="outline" className="flex-1">
                     <Save className="mr-2 h-4 w-4" />
                     Like ({template.likes_count || 0})
                   </Button>
                   
-                  {/* Share Button */}
                   <Button variant="outline" size="icon" onClick={handleShare}>
                     <Share2 className="h-4 w-4" />
                   </Button>
