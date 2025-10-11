@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { trackTemplateView, trackTemplateDownload } from '@/lib/gtag';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Download, Heart, Save, Share2, ArrowLeft, Play, Pause, Maximize, Minimize } from 'lucide-react';
@@ -78,13 +77,6 @@ const TemplateDetail = () => {
     fetchTemplate();
   }, [id, user]);
 
-  // Track template view when template loads
-  useEffect(() => {
-    if (template) {
-      trackTemplateView(template.id, template.title, template.editor);
-    }
-  }, [template]);
-
   const getEditorInfo = (editor: string) => {
     switch (editor?.toLowerCase()) {
       case 'vn':
@@ -119,7 +111,7 @@ const TemplateDetail = () => {
     }
 
     try {
-      // Track download
+      // Track download in database
       if (user) {
         await supabase
           .from('template_downloads')
@@ -132,7 +124,7 @@ const TemplateDetail = () => {
           ]);
       }
 
-      trackTemplateDownload(template.id, template.title, template.editor);
+      // Open CapCut URL
       window.open(template.capcut_url, '_blank');
       
       toast({
@@ -141,6 +133,7 @@ const TemplateDetail = () => {
       });
     } catch (error) {
       console.error('Error:', error);
+      // Still open the link even if tracking fails
       window.open(template.capcut_url, '_blank');
     }
   };
