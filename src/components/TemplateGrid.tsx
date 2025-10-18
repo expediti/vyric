@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import TemplateCard from "./TemplateCard";
+import Categories from "./Categories";
 
 
 const TemplateGrid = () => {
