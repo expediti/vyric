@@ -1,38 +1,40 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import TemplateCard from "./TemplateCard";
-import Categories from "./Categories";
-
 
 const TemplateGrid = () => {
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState(getSelectedCategory());
-
-  useEffect(() => {
-    const onCatChange = () => setCategory(getSelectedCategory());
-    window.addEventListener("vyric_category", onCatChange);
-    return () => window.removeEventListener("vyric_category", onCatChange);
-  }, []);
 
   useEffect(() => {
     const fetchTemplates = async () => {
-      setLoading(true);
-      let query = supabase.from('templates').select('*').order('created_at', { ascending: false });
-      if (category && category !== "") {
-        // match in either tags or title/category fields
-        query = query.ilike('tags', `%${category}%`).or(`title.ilike.%${category}%,description.ilike.%${category}%`);
+      try {
+        // Load templates from YOUR database
+        const { data, error } = await supabase
+          .from('templates')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Database error:', error);
+          return;
+        }
+
+        console.log('Loaded templates from database:', data); // Debug log
+        setTemplates(data || []);
+      } catch (error) {
+        console.error('Error fetching templates:', error);
+      } finally {
+        setLoading(false);
       }
-      const { data, error } = await query;
-      if (error) {
-        setTemplates([]);
-      } else {
-        setTemplates(data ?? []);
-      }
-      setLoading(false);
     };
+
     fetchTemplates();
-  }, [category]);
+
+    // Auto-refresh every 10 seconds to show new uploads
+    const interval = setInterval(fetchTemplates, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (loading) {
     return (
@@ -46,7 +48,8 @@ const TemplateGrid = () => {
   if (templates.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground text-lg mb-4">No templates found</p>
+        <p className="text-muted-foreground text-lg mb-4">No templates found in database</p>
+        <p className="text-sm text-muted-foreground">Upload your first template via the admin panel!</p>
       </div>
     );
   }
@@ -57,7 +60,6 @@ const TemplateGrid = () => {
         <TemplateCard
           key={template.id}
           id={template.id}
-          slug={template.slug}
           title={template.title}
           editor="CapCut"
           image={template.thumbnail_url || "/api/placeholder/400/225"}
@@ -68,7 +70,7 @@ const TemplateGrid = () => {
             ? `${Math.floor(template.duration_seconds / 60)}:${(template.duration_seconds % 60).toString().padStart(2, '0')}`
             : '0:15'
           }
-          tags={template.tags || []}
+          tags={[]}
         />
       ))}
     </div>
