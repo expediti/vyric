@@ -35,30 +35,25 @@ const TemplateGrid = () => {
     fetchTemplates();
   }, []);
 
-  // Category filtering
   const filteredTemplates = selectedCategory === "All Templates"
     ? templates
     : templates.filter(template => {
         const tag = categoryToTag(selectedCategory);
-        return (template.tags && template.tags.map(t => t.toLowerCase()).includes(tag))
-          || (template.title && template.title.toLowerCase().includes(tag));
+        return (
+          template.tags?.map((t) => t.toLowerCase()).includes(tag) ||
+          template.title?.toLowerCase().includes(tag)
+        );
       });
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="text-muted-foreground mt-4">Loading your templates...</p>
-      </div>
+      <div className="text-center py-12">Loading your templates...</div>
     );
   }
 
   if (filteredTemplates.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground text-lg mb-4">No templates found</p>
-        <p className="text-sm text-muted-foreground">Try a different filter or keyword.</p>
-      </div>
+      <div className="text-center py-12">No templates found</div>
     );
   }
 
