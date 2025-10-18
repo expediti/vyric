@@ -9,10 +9,10 @@ const TemplateGrid = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        // Load templates from YOUR database
+        // 🔥 Now fetch WITH slug column
         const { data, error } = await supabase
           .from('templates')
-          .select('*')
+          .select('*, slug') // Include slug in the query
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -60,6 +60,7 @@ const TemplateGrid = () => {
         <TemplateCard
           key={template.id}
           id={template.id}
+          slug={template.slug} // 🔥 Pass the slug
           title={template.title}
           editor="CapCut"
           image={template.thumbnail_url || "/api/placeholder/400/225"}
