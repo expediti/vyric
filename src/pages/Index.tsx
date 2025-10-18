@@ -6,19 +6,15 @@ import Footer from "@/components/Footer";
 const Index = () => {
   return (
     <>
-      {/* Single Navigation Bar */}
+      {/* Single navigation bar only at top */}
       <Navigation />
       <main>
-        {/* Hero title only - no search */}
-        <h1 className="text-center text-4xl font-bold mt-12 mb-6">
-          Professional CapCut Templates
-        </h1>
-        {/* Filter chips for categories */}
+        
+        {/* Category filter chips */}
         <Categories />
-        {/* Grid of templates */}
+        {/* Template grid */}
         <TemplateGrid />
       </main>
-      {/* Footer as before */}
       <Footer />
     </>
   );
