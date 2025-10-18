@@ -14,14 +14,20 @@ import { useState } from "react";
 
 const Navigation = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
     <>
       <nav className="border-b bg-background sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold flex items-center gap-2">
-            <img src="/favicon.ico" alt="logo" className="w-8 h-8"/>
+            <img src="/favicon.ico" alt="logo" className="w-8 h-8" />
             VYRIC
           </Link>
           <div className="hidden md:flex items-center space-x-6">
@@ -31,7 +37,6 @@ const Navigation = () => {
             <Link to="/about" className="hover:text-primary transition-colors">About</Link>
           </div>
           <div className="flex items-center space-x-2">
-            {/* Only add THIS LINE for search icon: */}
             <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)}>
               <Search />
             </Button>
@@ -50,10 +55,7 @@ const Navigation = () => {
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={async () => {
-                    await supabase.auth.signOut();
-                    useNavigate()("/");
-                  }}>
+                  <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out
                   </DropdownMenuItem>
@@ -63,14 +65,12 @@ const Navigation = () => {
               <>
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/login">
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Log in
+                    <LogIn className="mr-2 h-4 w-4" /> Log in
                   </Link>
                 </Button>
                 <Button size="sm" asChild>
                   <Link to="/register">
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Sign up
+                    <UserPlus className="mr-2 h-4 w-4" /> Sign up
                   </Link>
                 </Button>
               </>
@@ -78,7 +78,6 @@ const Navigation = () => {
           </div>
         </div>
       </nav>
-      {/* Search Modal */}
       {searchOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
           <div className="bg-background rounded-lg p-6 w-full max-w-lg flex flex-col">
