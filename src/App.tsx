@@ -35,7 +35,11 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              
+              {/* ⚠️ Keep BOTH routes for safety */}
               <Route path="/template/:id" element={<TemplateDetail />} />
+              <Route path="/:slug" element={<TemplateDetail />} />
+              
               <Route
                 path="/dashboard"
                 element={
