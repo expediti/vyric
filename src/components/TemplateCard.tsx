@@ -7,10 +7,11 @@ import { Link } from "react-router-dom";
 
 interface TemplateCardProps {
   id?: string;
+  slug?: string; // Add optional slug
   title: string;
   editor: string;
   image: string;
-  videoPreview?: string; // Add video preview URL
+  videoPreview?: string;
   downloads?: number;
   likes?: number;
   duration?: string;
@@ -19,6 +20,7 @@ interface TemplateCardProps {
 
 const TemplateCard = ({ 
   id = '1', 
+  slug, // Add slug parameter
   title, 
   editor, 
   image, 
@@ -33,6 +35,14 @@ const TemplateCard = ({
   const [isMuted, setIsMuted] = useState(true);
   const [showControls, setShowControls] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // 🔥 Smart URL generation
+  const getLinkUrl = () => {
+    if (slug) {
+      return `/${slug}`;  // Use slug for SEO-friendly URL
+    }
+    return `/template/${id}`;  // Fallback to old format
+  };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -189,7 +199,7 @@ const TemplateCard = ({
         </div>
         
         <Button className="w-full" asChild>
-          <Link to={`/template/${id}`}>
+          <Link to={getLinkUrl()}>
             <Eye className="mr-2 h-4 w-4" />
             View Template
           </Link>
