@@ -35,4 +35,4 @@ const Categories = ({ selected, onSelect }) => {
   );
 };
 
-export default Categories;
+export default Categories; 
