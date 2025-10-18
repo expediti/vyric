@@ -12,6 +12,7 @@ import Footer from '@/components/Footer';
 interface Template {
   id: string;
   title: string;
+  slug?: string; // Optional for backward compatibility
   description: string;
   thumbnail_url: string;
   video_preview_url: string;
@@ -24,7 +25,7 @@ interface Template {
 }
 
 const TemplateDetail = () => {
-  const { id } = useParams();
+  const { id, slug } = useParams(); // Get both parameters
   const { user } = useAuth();
   const { toast } = useToast();
   
@@ -39,14 +40,20 @@ const TemplateDetail = () => {
 
   useEffect(() => {
     const fetchTemplate = async () => {
-      if (!id) return;
+      const identifier = slug || id; // Use slug if available, fallback to id
+      if (!identifier) return;
       
       try {
-        const { data, error } = await supabase
-          .from('templates')
-          .select('*')
-          .eq('id', id)
-          .single();
+        let query = supabase.from('templates').select('*');
+        
+        // 🔥 Smart query: try slug first, then ID
+        if (slug) {
+          query = query.eq('slug', slug);
+        } else if (id) {
+          query = query.eq('id', id);
+        }
+        
+        const { data, error } = await query.single();
 
         if (error) {
           console.error('Error fetching template:', error);
@@ -54,14 +61,19 @@ const TemplateDetail = () => {
         }
 
         setTemplate(data);
+
+        // Update page title with template name
+        if (data) {
+          document.title = `${data.title} - CapCut Template | VYRIC`;
+        }
         
         // Check if in wishlist
-        if (user) {
+        if (user && data) {
           const { data: wishlistData } = await supabase
             .from('user_wishlist')
             .select('id')
             .eq('user_id', user.id)
-            .eq('template_id', id)
+            .eq('template_id', data.id)
             .single();
           
           setInWishlist(!!wishlistData);
@@ -75,7 +87,7 @@ const TemplateDetail = () => {
     };
 
     fetchTemplate();
-  }, [id, user]);
+  }, [id, slug, user]);
 
   const getEditorInfo = (editor: string) => {
     switch (editor?.toLowerCase()) {
@@ -133,7 +145,6 @@ const TemplateDetail = () => {
       });
     } catch (error) {
       console.error('Error:', error);
-      // Still open the link even if tracking fails
       window.open(template.capcut_url, '_blank');
     }
   };
