@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import TemplateCard from "./TemplateCard";
-import { getSelectedCategory } from "./Categories";
+
 
 const TemplateGrid = () => {
   const [templates, setTemplates] = useState<any[]>([]);
