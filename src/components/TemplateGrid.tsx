@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import supabase from '@/lib/supabase';
+import { supabase } from '@/lib/supabase'; // Use named import, not default
 import TemplateCard from './TemplateCard';
 
-const TemplateGrid = ({ selectedCategory }) => {
+interface TemplateGridProps {
+  selectedCategory?: string;
+}
+
+const TemplateGrid = ({ selectedCategory }: TemplateGridProps) => {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +57,7 @@ const TemplateGrid = ({ selectedCategory }) => {
           id={template.id}
           title={template.title}
           editor={template.editor}
-          image={template.thumbnailurl} // critical: matches all Catbox/crawler etc.
+          image={template.thumbnailurl} // matches your DB, not "image"
           videoPreview={template.videopreviewurl}
           downloads={template.downloadscount || 0}
           likes={template.likescount || 0}
