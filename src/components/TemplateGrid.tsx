@@ -1,45 +1,37 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import TemplateCard from "./TemplateCard";
+import supabase from '@/lib/supabase';
+import TemplateCard from './TemplateCard';
 
-const TemplateGrid = () => {
-  const [templates, setTemplates] = useState<any[]>([]);
+const TemplateGrid = ({ selectedCategory }) => {
+  const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTemplates = async () => {
-      try {
-        // Load templates from YOUR database
-        const { data, error } = await supabase
-          .from('templates')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.error('Database error:', error);
-          return;
-        }
-
-        console.log('Loaded templates from database:', data); // Debug log
-        setTemplates(data || []);
-      } catch (error) {
-        console.error('Error fetching templates:', error);
-      } finally {
-        setLoading(false);
+      setLoading(true);
+      let query = supabase
+        .from('templates')
+        .select('*')
+        .order('createdat', { ascending: false });
+      if (selectedCategory && selectedCategory !== "All Templates") {
+        query = query.ilike('editor', `%${selectedCategory}%`);
       }
+      const { data, error } = await query;
+      if (error) {
+        console.error("Database error", error);
+        setTemplates([]);
+      } else {
+        setTemplates(data || []);
+      }
+      setLoading(false);
     };
-
     fetchTemplates();
-
-    // Auto-refresh every 10 seconds to show new uploads
-    const interval = setInterval(fetchTemplates, 10000);
-    return () => clearInterval(interval);
-  }, []);
+  }, [selectedCategory]);
 
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
         <p className="text-muted-foreground mt-4">Loading your templates...</p>
       </div>
     );
@@ -48,29 +40,25 @@ const TemplateGrid = () => {
   if (templates.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground text-lg mb-4">No templates found in database</p>
-        <p className="text-sm text-muted-foreground">Upload your first template via the admin panel!</p>
+        <p className="text-muted-foreground">No templates found.</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
       {templates.map((template) => (
         <TemplateCard
           key={template.id}
           id={template.id}
           title={template.title}
-          editor="CapCut"
-          image={template.thumbnail_url || "/api/placeholder/400/225"}
-          videoPreview={template.video_preview_url}
-          downloads={template.downloads_count || 0}
-          likes={template.likes_count || 0}
-          duration={template.duration_seconds 
-            ? `${Math.floor(template.duration_seconds / 60)}:${(template.duration_seconds % 60).toString().padStart(2, '0')}`
-            : '0:15'
-          }
-          tags={[]}
+          editor={template.editor}
+          image={template.thumbnailurl} // critical: matches all Catbox/crawler etc.
+          videoPreview={template.videopreviewurl}
+          downloads={template.downloadscount || 0}
+          likes={template.likescount || 0}
+          duration={template.duration || "0:15"}
+          tags={template.tags}
         />
       ))}
     </div>
