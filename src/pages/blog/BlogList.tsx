@@ -5,7 +5,7 @@ import { Calendar, User } from "lucide-react";
 
 const blogPosts = [
   {
-    id: Top 10 CapCut Templates for Viral Videos,
+    id: "top-10-capcut-templates-for-viral-videos",
     title: "Top 10 CapCut Templates for Viral Videos",
     excerpt:
       "Discover the trending CapCut templates creators use to make viral Reels, Shorts, and TikToks in 2025.",
@@ -13,7 +13,7 @@ const blogPosts = [
     author: "VYRIC Team",
   },
   {
-    id: 2,
+    id: "how-to-edit-videos-like-a-pro-using-vyric-templates",
     title: "How to Edit Videos Like a Pro Using VYRIC Templates",
     excerpt:
       "A complete guide to making cinematic edits in minutes using the VYRIC CapCut template library.",
@@ -21,7 +21,7 @@ const blogPosts = [
     author: "Editor’s Desk",
   },
   {
-    id: 3,
+    id: "top-creator-tips-grow-faster-with-video-trends",
     title: "Top Creator Tips: Grow Faster with Video Trends",
     excerpt:
       "Learn how top creators are leveraging trends, sound design, and templates for explosive growth.",
@@ -56,7 +56,7 @@ const BlogList = () => {
               >
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src={`/blog/blog${post.id}.jpg`}
+                    src={`/blog/${post.id}.jpg`}
                     alt={post.title}
                     className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
                   />
