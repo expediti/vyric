@@ -17,6 +17,9 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
+import BlogList from "./pages/blog/BlogList";
+import BlogPost from "./pages/blog/BlogPost";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,6 +47,11 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              
+              {/* Blog routes */}
+              <Route path="/blog" element={<BlogList />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
+
               <Route path="/Amit@808801" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
