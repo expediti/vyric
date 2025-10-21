@@ -47,6 +47,10 @@ const Navigation = () => {
           <Link to="/about" className="hover:text-primary transition-colors">
             About
           </Link>
+          {/* Added Blog section */}
+          <Link to="/blog" className="hover:text-primary transition-colors">
+            Blog
+          </Link>
         </div>
 
         <div className="flex items-center space-x-2">
