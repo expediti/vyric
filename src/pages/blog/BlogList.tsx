@@ -5,7 +5,7 @@ import { Calendar, User } from "lucide-react";
 
 const blogPosts = [
   {
-    id: 1,
+    id: Top 10 CapCut Templates for Viral Videos,
     title: "Top 10 CapCut Templates for Viral Videos",
     excerpt:
       "Discover the trending CapCut templates creators use to make viral Reels, Shorts, and TikToks in 2025.",
