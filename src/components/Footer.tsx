@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-background border-t border-border mt-auto">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -20,7 +20,7 @@ const Footer = () => {
             <p className="text-muted-foreground text-sm">
               Your ultimate destination for free CapCut templates, trending presets, and viral video effects.
             </p>
-            
+
             {/* Social Media Icons */}
             <div className="flex space-x-4">
               {/* TikTok Icon */}
@@ -115,6 +115,28 @@ const Footer = () => {
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                   How to Use
                 </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Blog Section Added */}
+          <div>
+            <h3 className="font-semibold mb-4">Blog</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Latest Posts
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Tutorials
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Updates
+                </Link>
               </li>
             </ul>
           </div>
